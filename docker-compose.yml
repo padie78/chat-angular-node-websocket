@@ -1,0 +1,13 @@
+services:
+  chat-client:
+    build: ./chat-client
+    container_name: chat-client
+    ports:
+      - "4200:4200"
+
+
+  chat-server:
+    build: ./chat-server
+    container_name: chat-server
+    ports:
+      - "3000:3000"

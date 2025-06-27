@@ -1,0 +1,13 @@
+<div class="container">
+  <input [(ngModel)]="username" placeholder="Tu nombre" />
+  <button (click)="join()">Entrar</button>
+
+  <ul>
+    <li *ngFor="let msg of messages">
+      <strong>{{ msg.username }}:</strong> {{ msg.text || msg }}
+    </li>
+  </ul>
+
+  <input [(ngModel)]="message" placeholder="Mensaje..." />
+  <button (click)="send()">Enviar</button>
+</div>
