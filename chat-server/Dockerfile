@@ -1,7 +1,14 @@
 # Etapa de build
-FROM node:20 AS builder
-WORKDIR /app
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
 COPY package*.json ./
+
 RUN npm install
+
 COPY . .
-RUN npm run start:dev
+
+RUN npm run build
+
+CMD ["node", "dist/main"]

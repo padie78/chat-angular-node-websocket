@@ -1,13 +1,24 @@
-<div class="container">
-  <input [(ngModel)]="username" placeholder="Tu nombre" />
-  <button (click)="join()">Entrar</button>
+<div style="max-width: 500px; margin: auto">
+  <h2>Chat in real time</h2>
+  <div *ngIf="!userSet">
+    <label for="name">Name:</label><br>
+    <input [(ngModel)]="user" id="name" placeholder="Your Name" />
+    <button (click)="setUser()">Enter</button>
+  </div>
 
-  <ul>
-    <li *ngFor="let msg of messages">
-      <strong>{{ msg.username }}:</strong> {{ msg.text || msg }}
-    </li>
-  </ul>
+  <div *ngIf="userSet">
+    <div style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto">
+      <ul>
+        <li *ngFor="let msg of messages">
+          <strong>{{ msg.user }}:</strong> {{ msg.text }}<br>
+          <small>{{ msg.timestamp | date:'short' }}</small>
+        </li>
+      </ul>
+    </div>
 
-  <input [(ngModel)]="message" placeholder="Mensaje..." />
-  <button (click)="send()">Enviar</button>
+    <input [(ngModel)]="text" placeholder="Write your message" />
+    <button (click)="send()">Send</button>
+  </div>
 </div>
+
+

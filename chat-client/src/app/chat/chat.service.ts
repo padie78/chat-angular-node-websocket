@@ -1,29 +1,29 @@
 import { Injectable } from '@angular/core';
-import { io, Socket } from 'socket.io-client';
 import { Observable } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class ChatService {
   private socket: Socket;
 
   constructor() {
-    console.log('constructor');
-    this.socket = io('http://chat-server:3000'); // usar nombre de servicio en Docker
+    this.socket = io('http://localhost:3000');
   }
 
-  join(username: string): void {
-    this.socket.emit('join', username);
-  }
-
-  sendMessage(message: string): void {
-    this.socket.emit('message', message);
+  sendMessage(msg: { user: string; text: string; timestamp: string }) {
+    this.socket.emit('message', msg);
   }
 
   onMessage(): Observable<any> {
     return new Observable(observer => {
-      this.socket.on('message', (data) => {
-        observer.next(data);
-      });
+      const handler = (data: any) => observer.next(data);
+      this.socket.on('message', handler);
+      return () => {
+        this.socket.off('message', handler);
+      };
     });
   }
 }
+

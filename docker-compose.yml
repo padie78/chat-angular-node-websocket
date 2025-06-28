@@ -2,12 +2,19 @@ services:
   chat-client:
     build: ./chat-client
     container_name: chat-client
+    depends_on:
+      - "chat-server"
     ports:
       - "4200:4200"
-
-
+    networks:
+      - chat-net
   chat-server:
     build: ./chat-server
     container_name: chat-server
     ports:
       - "3000:3000"
+    networks:
+      - chat-net
+networks:
+  chat-net:
+    driver: bridge
