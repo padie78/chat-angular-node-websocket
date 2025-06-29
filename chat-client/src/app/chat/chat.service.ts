@@ -16,6 +16,10 @@ export class ChatService {
     this.socket.emit('message', msg);
   }
 
+  typingMessage(msg: { user: string; text: string; timestamp: string }) {
+    this.socket.emit('typing', msg);
+  }
+  
   onMessage(): Observable<any> {
     return new Observable(observer => {
       const handler = (data: any) => observer.next(data);
@@ -24,6 +28,18 @@ export class ChatService {
         this.socket.off('message', handler);
       };
     });
+  }
+
+  sendTyping(user: string) {
+    this.socket.emit('typing', { user });
+  }
+
+  onTyping(): Observable<any>{
+    return new Observable(observer => {
+      this.socket.on('typing', (data) => {
+        observer.next(data);
+      });
+    });  
   }
 }
 

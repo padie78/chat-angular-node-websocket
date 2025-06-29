@@ -15,14 +15,26 @@ export class ChatComponent implements OnInit, OnDestroy {
   messages: any[] = [];
   user = '';
   text = '';
-  sub!: Subscription;
+  subMessage!: Subscription;
+  subTyping!: Subscription;
   userSet = false;
+  userTyping = '';
+  isTyping = false;
+  typingTimer: any;
+  remoteUserTyping = '';
 
   constructor(private chat: ChatService) {}
 
   ngOnInit(): void {
-    this.sub = this.chat.onMessage().subscribe((msg) => {
+    this.subMessage = this.chat.onMessage().subscribe((msg) => {
       this.messages.push(msg);
+    });
+    
+    this.subTyping = this.chat.onTyping().subscribe((data) => {
+      this.remoteUserTyping = data.user;
+      setTimeout(() => {
+        this.remoteUserTyping = '';
+      }, 4000);
     });
   }
 
@@ -55,7 +67,18 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
+  typing(){
+    clearTimeout(this.typingTimer);
+    console.log('this.user', this.user);
+    this.chat.sendTyping(this.user); // cambiá por el nombre real
+    this.isTyping = true;
+    this.typingTimer = setTimeout(() => {
+      this.isTyping = false;
+    }, 3000);
+  }
+
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.subMessage.unsubscribe();
+    this.subTyping.unsubscribe();
   }
 }

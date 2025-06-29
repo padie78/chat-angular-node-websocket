@@ -22,7 +22,7 @@ export class ChatGateway
 
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
-    client.emit('history', this.chatService.getMessages());
+    //client.emit('history', this.chatService.getMessages());
   }
 
   handleDisconnect(client: Socket) {
@@ -36,4 +36,10 @@ export class ChatGateway
   ) {
     client.broadcast.emit('message', data);
   }
+
+  @SubscribeMessage('typing')
+  handleTyping(@MessageBody() data: { user: string }, @ConnectedSocket() client: Socket) {
+    client.broadcast.emit('typing', data);
+  }
+
 }
