@@ -41,5 +41,18 @@ export class ChatService {
       });
     });  
   }
+
+  onUsers(): Observable<string[]> {
+    return new Observable(observer => {
+      this.socket.on('users', (userList: string[]) => {
+        observer.next(userList);
+      });
+    });
+  }
+
+  register(user: string) {
+    this.socket.emit('register', { user });
+  }
+
 }
 

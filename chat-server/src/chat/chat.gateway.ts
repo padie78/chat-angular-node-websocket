@@ -1,5 +1,6 @@
 import {
   WebSocketGateway,
+  WebSocketServer,
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
@@ -7,13 +8,15 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
 
 @WebSocketGateway({ cors: true })
-export class ChatGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
+  private users = new Map<string, string>(); // clientId -> user
+
   constructor(private readonly chatService: ChatService) {}
 
   afterInit() {
@@ -22,11 +25,18 @@ export class ChatGateway
 
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
-    //client.emit('history', this.chatService.getMessages());
   }
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+    this.users.delete(client.id);
+    this.emitUserList();
+  }
+
+  @SubscribeMessage('register')
+  handleRegister(@MessageBody() data: { user: string }, @ConnectedSocket() client: Socket) {
+    this.users.set(client.id, data.user);
+    this.emitUserList();
   }
 
   @SubscribeMessage('message')
@@ -40,6 +50,11 @@ export class ChatGateway
   @SubscribeMessage('typing')
   handleTyping(@MessageBody() data: { user: string }, @ConnectedSocket() client: Socket) {
     client.broadcast.emit('typing', data);
+  }
+
+  private emitUserList() {
+    const users = Array.from(this.users.values());
+    this.server.emit('users', users);  
   }
 
 }

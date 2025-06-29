@@ -22,6 +22,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   isTyping = false;
   typingTimer: any;
   remoteUserTyping = '';
+  userList: string[] = [];
 
   constructor(private chat: ChatService) {}
 
@@ -36,6 +37,10 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.remoteUserTyping = '';
       }, 4000);
     });
+
+    this.chat.onUsers().subscribe((users) => {
+      this.userList = users;
+    });
   }
 
   setUser() {
@@ -46,6 +51,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         text: `${this.user} join to chat`,
         timestamp: new Date().toISOString()
       });
+      this.chat.register(this.user);
     }
   }
 

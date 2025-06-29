@@ -1,25 +1,36 @@
-<div style="max-width: 500px; margin: auto">
-  <h2>Chat in real time</h2>
-  <div *ngIf="!userSet">
-    <label for="name">Name:</label><br>
-    <input [(ngModel)]="user" id="name" placeholder="Your Name" />
-    <button (click)="setUser()">Enter</button>
+<div class="chat-container">
+  <div class="user-list">
+    <h4>UserConnected:</h4>
+    <ul>
+      <li *ngFor="let user of userList">{{ user }}</li>
+    </ul>
   </div>
-
-  <div *ngIf="userSet">
-    <p *ngIf="remoteUserTyping">{{ remoteUserTyping }} is typing...</p>
-    <div style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto">
-      <ul>
-        <li *ngFor="let msg of messages">
-          <strong>{{ msg.user }}:</strong> {{ msg.text }}<br>
-          <small>{{ msg.timestamp | date:'short' }}</small>
-        </li>
-      </ul>
+  <div class="chat-box">
+    <div style="max-width: 500px; margin: auto">
+      <h2>Chat in real time</h2>
+      <div *ngIf="!userSet">
+        <label for="name">Name:</label><br>
+        <input [(ngModel)]="user" id="name" placeholder="Your Name" />
+        <button (click)="setUser()">Enter</button>
+      </div>
+      <div *ngIf="userSet">
+        <p *ngIf="remoteUserTyping">{{ remoteUserTyping }} is typing...</p>
+        <div style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto">
+          <ul>
+            <li *ngFor="let msg of messages">
+              <strong>{{ msg.user }}:</strong> {{ msg.text }}<br>
+              <small>{{ msg.timestamp | date:'short' }}</small>
+            </li>
+          </ul>
+        </div>
+        <input [(ngModel)]="text" (input)="typing()" placeholder="Write your message" />
+        <button (click)="send()">Send</button>
+      </div>
     </div>
-
-    <input [(ngModel)]="text" (input)="typing()" placeholder="Write your message" />
-    <button (click)="send()">Send</button>
   </div>
 </div>
+
+
+
 
 
